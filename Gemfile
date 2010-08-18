@@ -1,0 +1,5 @@
+gem 'sinatra',   '1.0'
+gem 'contest',   '0.1.2'
+gem 'rack',      '1.2.1'
+gem 'rack-test', '0.5.4'
+gem 'linguistics', '1.0.8'
