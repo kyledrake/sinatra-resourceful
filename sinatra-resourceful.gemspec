@@ -14,4 +14,5 @@ spec = Gem::Specification.new do |s|
   s.homepage = "http://github.com/kyledrake/sinatra-resourceful"
   s.requirements << 'sinatra, v1.0 or greater'
   s.add_dependency 'sinatra', '>= 1.0'
+  s.add_dependency 'linguistics', '1.0.8'
 end
