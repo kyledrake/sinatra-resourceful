@@ -27,7 +27,7 @@ class AppTests < Test::Unit::TestCase
       mock_app { resource Widget, :create }
       post '/widgets'
       assert last_response.redirect?
-      assert last_response.headers['Location'] == '/widgets'
+      assert last_response.headers['Location'] =~ /\/widgets$/
     end
     
     test 'loads edit route' do
@@ -41,7 +41,7 @@ class AppTests < Test::Unit::TestCase
       mock_app { resource Widget, :update }
       put '/widgets/id', {:widget => {:test => 'works'}}
       assert last_response.redirect?
-      assert last_response.headers['Location'] == '/widgets'
+      assert last_response.headers['Location'] =~ /\/widgets/
     end
     
     test 'loads show route' do
@@ -70,7 +70,7 @@ class AppTests < Test::Unit::TestCase
     end
   end
   
-  test 'Uses specified conditions' do
+  test 'uses specified conditions' do
     mock_app do
       resource Widget, :all do
         conditions :is_not_an_idiot => true
@@ -80,7 +80,7 @@ class AppTests < Test::Unit::TestCase
     assert last_response.body =~ /fancy/
   end
   
-  test 'Uses alternative create redirect route' do
+  test 'uses alternative create redirect route' do
     mock_app do
       resource Widget, :create do
         create_redirect '/something/else'
@@ -88,10 +88,10 @@ class AppTests < Test::Unit::TestCase
     end
     post '/widgets'
     assert last_response.redirect?
-    assert last_response.headers['Location'] == '/something/else'
+    assert last_response.headers['Location'] =~ /\/something\/else$/
   end
   
-  test 'Uses alternative update redirect route' do
+  test 'uses alternative update redirect route' do
     mock_app do
       resource Widget, :update do
         update_redirect '/new/update'
@@ -99,10 +99,10 @@ class AppTests < Test::Unit::TestCase
     end
     put '/widgets/id', {:widget => {:test => 'works'}}
     assert last_response.redirect?
-    assert last_response.headers['Location'] == '/new/update'
+    assert last_response.headers['Location'] =~ /\/new\/update$/
   end
   
-  test 'Updates create and update redirect' do
+  test 'updates create and update redirect' do
     mock_app do
       resource Widget, :all do
         redirect "/strange/route"
@@ -110,10 +110,10 @@ class AppTests < Test::Unit::TestCase
     end
     post '/widgets'
     assert last_response.redirect?
-    assert last_response.headers['Location'] == '/strange/route'
+    assert last_response.headers['Location'] =~ /\/strange\/route$/
     put '/widgets/id', {:widget => {:test => 'works'}}
     assert last_response.redirect?
-    assert last_response.headers['Location'] == '/strange/route'
+    assert last_response.headers['Location'] =~ /\/strange\/route$/
   end
   
   test 'resource actions can be array' do
@@ -123,7 +123,7 @@ class AppTests < Test::Unit::TestCase
     
     assert true
   end
-=begin  
+=begin    
   test 'before block works' do
     mock_app do
       resource Widget, :index do
@@ -136,7 +136,8 @@ class AppTests < Test::Unit::TestCase
     assert last_response.ok?
     assert last_response.headers['Content-Type'] == 'text/xml'
   end
-
+=end
+=begin
   test 'after block works' do
     mock_app do
       resource Widget, :index do
