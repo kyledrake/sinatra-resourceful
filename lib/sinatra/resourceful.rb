@@ -28,9 +28,11 @@ module Sinatra
         create_redirect = @create_redirect || redirect
         update_redirect = @update_redirect || redirect
         conditions = @conditions
+        before = @before
         
         if actions.include? :index
           app.get "/#{plural}/?" do
+            self.instance_eval &before if before
             instance_variable_set "@#{plural}", eval(model).send(:all, conditions)
             erb "#{plural}/index".to_sym
           end
@@ -79,10 +81,16 @@ module Sinatra
         end
       end
       
-      def conditions(opts={}) ; @conditions = opts ; end
-      def create_redirect(url) ; @create_redirect = url ; end
-      def update_redirect(url) ; @update_redirect = url ; end
-      def redirect(url) ; @redirect = url ; end
+      def before(*actions, &block)
+        actions << :all if actions.empty?
+        @before_actions = actions
+        @before = block
+      end
+      
+      def conditions(opts={}); @conditions = opts end
+      def create_redirect(url); @create_redirect = url end
+      def update_redirect(url); @update_redirect = url end
+      def redirect(url); @redirect = url end
     end
 
     def self.registered(app)

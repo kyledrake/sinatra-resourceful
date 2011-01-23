@@ -64,3 +64,9 @@ class Widget
   end
   
 end
+
+class Brit < Widget
+  def self.all(args = {})
+    return ['fancybrit'] if args && args[:is_not_an_idiot] == true
+  end
+end

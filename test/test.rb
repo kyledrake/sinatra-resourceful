@@ -123,20 +123,43 @@ class AppTests < Test::Unit::TestCase
     
     assert true
   end
-=begin    
-  test 'before block works' do
+ 
+  test 'two resources work simultaneously' do
+    mock_app do
+      resource Widget, :all do
+        conditions :is_not_an_idiot => true
+      end
+      resource Brit, :all do
+        conditions :is_not_an_idiot => true
+      end
+    end
+    
+    get '/widgets'
+    assert last_response.ok?
+    assert last_response.body =~ /fancy/
+    get '/brits'
+    assert last_response.body =~ /fancybrit/
+  end
+ 
+  context 'before_model block' do
+    test 'works for index' do
+      
+    end
+  end
+ 
+  test 'before_model block works' do
     mock_app do
       resource Widget, :index do
-        before do
+        before(:all) do
           content_type 'text/xml'
         end
       end
     end
     get '/widgets'
     assert last_response.ok?
-    assert last_response.headers['Content-Type'] == 'text/xml'
+    assert last_response.headers['Content-Type'] =~ /^text\/xml/
   end
-=end
+  
 =begin
   test 'after block works' do
     mock_app do
