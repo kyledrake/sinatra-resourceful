@@ -29,10 +29,11 @@ module Sinatra
         update_redirect = @update_redirect || redirect
         conditions = @conditions
         before = @before
+        before_actions = @before_actions || []
         
         if actions.include? :index
           app.get "/#{plural}/?" do
-            self.instance_eval &before if before
+            self.instance_eval &before if before_actions.include?(:index)
             instance_variable_set "@#{plural}", eval(model).send(:all, conditions)
             erb "#{plural}/index".to_sym
           end

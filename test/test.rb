@@ -145,15 +145,14 @@ class AppTests < Test::Unit::TestCase
     setup do
       mock_app do
         resource Widget, :all do
-          before(:all) do
-            content_type 'text/xml'
-          end
+          before(:all) { content_type 'text/xml' }
         end
       end
     end
     
     test 'works for index' do
       get '/widgets'
+      
       assert last_response.ok?
       assert last_response.headers['Content-Type'] =~ /^text\/xml/
     end
