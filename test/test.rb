@@ -142,22 +142,22 @@ class AppTests < Test::Unit::TestCase
   end
  
   context 'before_model block' do
-    test 'works for index' do
-      
-    end
-  end
- 
-  test 'before_model block works' do
-    mock_app do
-      resource Widget, :index do
-        before(:all) do
-          content_type 'text/xml'
+    setup do
+      mock_app do
+        resource Widget, :all do
+          before(:all) do
+            content_type 'text/xml'
+          end
         end
       end
     end
-    get '/widgets'
-    assert last_response.ok?
-    assert last_response.headers['Content-Type'] =~ /^text\/xml/
+    
+    test 'works for index' do
+      get '/widgets'
+      assert last_response.ok?
+      assert last_response.headers['Content-Type'] =~ /^text\/xml/
+    end
+    
   end
   
 =begin
