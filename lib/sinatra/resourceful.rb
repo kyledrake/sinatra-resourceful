@@ -2,7 +2,6 @@ require 'linguistics'
 
 module Sinatra
   module Resourceful
-    
     def resource(model, *actions, &block)
       Resource.new self, model, actions, block
     end
@@ -34,56 +33,69 @@ module Sinatra
         if actions.include? :index
           app.get "/#{plural}/?" do
             self.instance_eval &before if before_actions.include?(:index) || before_actions.include?(:all)
-            instance_variable_set "@#{plural}", eval(model).send(:all, conditions)
-            erb "#{plural}/index".to_sym
+            self.instance_eval %{
+              @#{plural} = #{model}.all conditions
+              erb "#{plural}/index".to_sym
+            }
           end
         end
 
         if actions.include? :new
           app.get "/#{plural}/new" do
             self.instance_eval &before if before_actions.include?(:new) || before_actions.include?(:all)
-            instance_variable_set "@#{plural}", eval(model).new
-            erb "#{plural}/new".to_sym
+            self.instance_eval %{
+              erb "#{plural}/new".to_sym
+            }
           end
         end
 
         if actions.include? :create
           app.post "/#{plural}" do
             self.instance_eval &before if before_actions.include?(:create) || before_actions.include?(:all)
-            instance_variable_set "@#{plural}", eval(model).send(:create, "params[:#{singular}]")
-            redirect create_redirect
+            self.instance_eval %{
+              @#{plural} = #{model}.create params[:#{singular}]
+              redirect create_redirect
+            }
           end
         end
 
         if actions.include? :update
           app.put "/#{plural}/:id" do
             self.instance_eval &before if before_actions.include?(:update) || before_actions.include?(:all)
-            eval "#{singular} = #{model}.get(params[:id]).update params[:#{singular}]"
-            redirect update_redirect
+            self.instance_eval %{
+              #{singular} = #{model}.get(params[:id]).update params[:#{singular}]
+              redirect update_redirect
+            }
           end
         end
 
         if actions.include? :edit
           app.get "/#{plural}/:id/edit" do
             self.instance_eval &before if before_actions.include?(:edit) || before_actions.include?(:all)
-            eval "@#{singular} = #{model}.get params[:id]"
-            erb "#{plural}/edit".to_sym
+            self.instance_eval %{
+              @#{singular} = #{model}.get params[:id]
+              erb :"#{plural}/edit"
+            }
           end
         end
 
         if actions.include? :show
           app.get "/#{plural}/:id" do
             self.instance_eval &before if before_actions.include?(:show) || before_actions.include?(:all)
-            eval "@#{singular} = #{model}.get params[:id]"
-            erb "#{plural}/show".to_sym
+            self.instance_eval %{
+              @#{singular} = #{model}.get params[:id]
+              erb :"#{plural}/show"
+            }
           end
         end
 
         if actions.include? :delete
           app.delete "/#{plural}/:id" do
             self.instance_eval &before if before_actions.include?(:delete) || before_actions.include?(:all)
-            eval "#{model}.get(params[:id]).destroy"
-            redirect "/#{plural}"
+            self.instance_eval %{
+              #{model}.get(params[:id]).destroy
+              redirect "/#{plural}"
+            }
           end
         end
       end
