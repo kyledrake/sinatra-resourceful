@@ -152,11 +152,8 @@ class AppTests < Test::Unit::TestCase
     
     test 'works for index' do
       get '/widgets'
-      
-      assert last_response.ok?
       assert last_response.headers['Content-Type'] =~ /^text\/xml/
     end
-    
   end
   
 =begin
