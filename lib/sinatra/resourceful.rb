@@ -7,13 +7,13 @@ module Sinatra
     end
     
     class Resource
-      
+      ACTIONS = [:index, :new, :create, :show, :edit, :update, :delete]
       def initialize(app, model, actions, block)
         
         raise ArgumentError, 'action(s) must be Array, String, or Symbol' unless [Array, String, Symbol].include? actions.class
         
         if (actions.is_a?(Symbol) && actions == :all) || (actions.is_a?(Array) && actions == [:all])
-          actions = [:index, :new, :create, :show, :edit, :update, :delete]
+          actions = ACTIONS
           actions = [*actions]
         end
         
@@ -29,10 +29,11 @@ module Sinatra
         conditions = @conditions
         before = @before
         before_actions = @before_actions || []
+        before_actions = ACTIONS if before_actions.include?(:all)
         
         if actions.include? :index
           app.get "/#{plural}/?" do
-            self.instance_eval &before if before_actions.include?(:index) || before_actions.include?(:all)
+            self.instance_eval &before if before_actions.include?(:index)
             self.instance_eval %{
               @#{plural} = #{model}.all conditions
               erb "#{plural}/index".to_sym
@@ -42,7 +43,7 @@ module Sinatra
 
         if actions.include? :new
           app.get "/#{plural}/new" do
-            self.instance_eval &before if before_actions.include?(:new) || before_actions.include?(:all)
+            self.instance_eval &before if before_actions.include?(:new)
             self.instance_eval %{
               erb "#{plural}/new".to_sym
             }
@@ -51,7 +52,7 @@ module Sinatra
 
         if actions.include? :create
           app.post "/#{plural}" do
-            self.instance_eval &before if before_actions.include?(:create) || before_actions.include?(:all)
+            self.instance_eval &before if before_actions.include?(:create)
             self.instance_eval %{
               @#{plural} = #{model}.create params[:#{singular}]
               redirect create_redirect
@@ -61,7 +62,7 @@ module Sinatra
 
         if actions.include? :update
           app.put "/#{plural}/:id" do
-            self.instance_eval &before if before_actions.include?(:update) || before_actions.include?(:all)
+            self.instance_eval &before if before_actions.include?(:update)
             self.instance_eval %{
               #{singular} = #{model}.get(params[:id]).update params[:#{singular}]
               redirect update_redirect
@@ -71,7 +72,7 @@ module Sinatra
 
         if actions.include? :edit
           app.get "/#{plural}/:id/edit" do
-            self.instance_eval &before if before_actions.include?(:edit) || before_actions.include?(:all)
+            self.instance_eval &before if before_actions.include?(:edit)
             self.instance_eval %{
               @#{singular} = #{model}.get params[:id]
               erb :"#{plural}/edit"
@@ -81,7 +82,7 @@ module Sinatra
 
         if actions.include? :show
           app.get "/#{plural}/:id" do
-            self.instance_eval &before if before_actions.include?(:show) || before_actions.include?(:all)
+            self.instance_eval &before if before_actions.include?(:show)
             self.instance_eval %{
               @#{singular} = #{model}.get params[:id]
               erb :"#{plural}/show"
@@ -91,7 +92,7 @@ module Sinatra
 
         if actions.include? :delete
           app.delete "/#{plural}/:id" do
-            self.instance_eval &before if before_actions.include?(:delete) || before_actions.include?(:all)
+            self.instance_eval &before if before_actions.include?(:delete)
             self.instance_eval %{
               #{model}.get(params[:id]).destroy
               redirect "/#{plural}"
