@@ -23,13 +23,18 @@ module Sinatra
         
         self.instance_eval(&block) if block
 
-        redirect = @redirect || "/#{plural}"
-        create_redirect = @create_redirect || redirect
-        update_redirect = @update_redirect || redirect
+        @redirect ||= "/#{plural}"
+        @create_redirect ||= @redirect
+        @update_redirect ||= @redirect
+        @before_actions ||= []
+        @before_actions = ACTIONS if @before_actions.include?(:all)
+        
+        redirect = @redirect
+        create_redirect = @create_redirect
+        update_redirect = @update_redirect
         conditions = @conditions
         before = @before
-        before_actions = @before_actions || []
-        before_actions = ACTIONS if before_actions.include?(:all)
+        before_actions = @before_actions
         
         if actions.include? :index
           app.get "/#{plural}/?" do
