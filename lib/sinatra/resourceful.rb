@@ -20,9 +20,7 @@ module Sinatra
         
         raise ArgumentError, 'action(s) must be Array, String, or Symbol' unless [Array, String, Symbol].include? actions.class
         
-        if (actions.is_a?(Symbol) && actions == :all) || (actions.is_a?(Array) && actions == [:all])
-          actions = ACTIONS
-        end
+        actions = ACTIONS if (actions.is_a?(Symbol) && actions == :all) || (actions.is_a?(Array) && actions == [:all])
         
         self.instance_eval(&block) if block
 
