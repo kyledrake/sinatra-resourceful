@@ -1,6 +1,6 @@
 module DataMapperTemplate
   def index
-    _c = @config
+    _c = config
     app.get "/#{_c.plural}/?" do
       self.instance_eval &_c.before if _c.before_actions.include?(:index)
       self.instance_eval %{
@@ -11,7 +11,7 @@ module DataMapperTemplate
   end
   
   def new
-    _c = @config
+    _c = config
     app.get "/#{_c.plural}/new" do
       self.instance_eval &_c.before if _c.before_actions.include?(:new)
       self.instance_eval %{
@@ -21,7 +21,7 @@ module DataMapperTemplate
   end
   
   def create
-    _c = @config
+    _c = config
     app.post "/#{_c.plural}" do
       self.instance_eval &_c.before if _c.before_actions.include?(:create)
       self.instance_eval %{
@@ -32,7 +32,7 @@ module DataMapperTemplate
   end
   
   def update
-    _c = @config
+    _c = config
     app.put "/#{_c.plural}/:id" do
       self.instance_eval &_c.before if _c.before_actions.include?(:update)
       self.instance_eval %{
@@ -43,7 +43,7 @@ module DataMapperTemplate
   end
   
   def edit
-    _c = @config
+    _c = config
     app.get "/#{_c.plural}/:id/edit" do
       self.instance_eval &_c.before if _c.before_actions.include?(:edit)
       self.instance_eval %{
@@ -54,7 +54,7 @@ module DataMapperTemplate
   end
   
   def show
-    _c = @config
+    _c = config
     app.get "/#{_c.plural}/:id" do
       self.instance_eval &_c.before if _c.before_actions.include?(:show)
       self.instance_eval %{
@@ -65,7 +65,7 @@ module DataMapperTemplate
   end
   
   def delete
-    _c = @config
+    _c = config
     app.delete "/#{_c.plural}/:id" do
       self.instance_eval &_c.before if _c.before_actions.include?(:delete)
       self.instance_eval %{
