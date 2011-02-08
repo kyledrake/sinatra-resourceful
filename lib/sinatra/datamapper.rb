@@ -1,4 +1,17 @@
 module DataMapperTemplate
+  extend Sinatra::Resourceful::Template
+  
+  route(:index) do
+    _c = config
+    app.get "/#{_c.plural}/?" do
+      self.instance_eval &_c.before if _c.before_actions.include?(:index)
+      self.instance_eval %{
+        @#{_c.plural} = #{_c.model}.all _c.conditions
+        erb "#{_c.plural}/index".to_sym
+      }
+    end
+  end
+=begin
   def index
     _c = config
     app.get "/#{_c.plural}/?" do
@@ -9,7 +22,7 @@ module DataMapperTemplate
       }
     end
   end
-  
+=end
   def new
     _c = config
     app.get "/#{_c.plural}/new" do

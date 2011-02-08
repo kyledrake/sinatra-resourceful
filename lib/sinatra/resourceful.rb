@@ -1,6 +1,5 @@
 require 'ostruct'
 require 'linguistics'
-require 'lib/sinatra/datamapper' # DELETE THIS, SEND THROUGH DSL
 
 module Sinatra
   module Resourceful
@@ -8,8 +7,17 @@ module Sinatra
       Resource.new self, model, actions, block
     end
     
+    module Template
+      
+      def route(name, &block)
+        define_method name.to_sym, block
+      end
+    end
+    
     class Resource
       
+      ######## Delete these next two lines when DSL implements ability to do this.
+      require 'lib/sinatra/datamapper'
       include DataMapperTemplate
       
       class Config < OpenStruct; end
