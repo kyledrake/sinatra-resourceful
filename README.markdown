@@ -1,11 +1,11 @@
 Sinatra::Resourceful
 ===
 
-Sinatra::Resourceful is a thought experiment: A tool for helping you to DRY up your REST routes using templates. Most applications have specific things required for their models that disallows for a generic REST route generation tool. The difference is that this one allows you to create your own.
+Sinatra::Resourceful is a tool for auto-generating routes for REST resources in Sinatra. It is based on my belief that using a fat models approach, Sinatra can be used to scale up to larger applications by eliminating the requirement to write a lot of redundant route code.
 
-The goal is to implement a simple, easy to use mechanism for cleaning up Sinatra applications by reducing the amount of code required to deal with routes for those that subscribe to the fat models MVC approach.
+In addition to providing this functionality, it isolates route generation into modules so that you can easily write your own template, and then use that template for your specific application.
 
-It is incomplete and everything here is subject to change.
+It is under active development, and things are subject to change. This message will go away when the project reaches a better level of stability.
 
 Installation
 ---
