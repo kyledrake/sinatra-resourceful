@@ -38,20 +38,26 @@ module Sinatra
         @update_redirect ||= @redirect
         @before_actions ||= []
         @before_actions = ACTIONS if @before_actions.include?(:all)
+        @template ||= Sinatra::Resourceful.default_template
         
         # Containerize these with an OpenStruct, so we can bind them to a local variable for the block execution.
         # The alternative is something crazy that writes local variables from instance variables.. not interested.
         @config = Config.new :model => @model,
                              :singular => @singular,
                              :plural => @plural,
-                             :redirect => @redirect, 
-                             :create_redirect => @create_redirect, 
-                             :update_redirect => @update_redirect, 
+                             :redirect => @redirect,
+                             :create_redirect => @create_redirect,
+                             :update_redirect => @update_redirect,
+                             :template => @template,
                              :conditions => @conditions,
                              :before => @before,
                              :before_actions => @before_actions,
                              :actions => actions
-        extend eval(Sinatra::Resourceful.default_template) || Sinatra::Resourceful::DataMapperTemplate
+        
+        # This next line is probably a bad thing. I'm assuming one-time template doesn't work here, since it's extending to the class.
+        # This will likely be an issue requiring resolution.
+        extend @template
+        
         actions.each {|action| send(action.to_sym)}
       end
       
@@ -60,6 +66,7 @@ module Sinatra
         @before = block
       end
       
+      def template(mod); @template = mod end
       def conditions(opts={}); @conditions = opts end
       def create_redirect(url); @create_redirect = url end
       def update_redirect(url); @update_redirect = url end

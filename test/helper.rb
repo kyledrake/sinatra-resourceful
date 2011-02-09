@@ -71,11 +71,13 @@ class Brit < Widget
   end
 end
 
-module TestTemplate
-  def index
-    _c = config
-    'Template!'
+module Sinatra
+  module Resourceful
+    module TestTemplate
+      def index
+        _c = config
+        app.get('/') {'Template!'}
+      end
+    end
   end
 end
-
-

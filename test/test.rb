@@ -2,6 +2,12 @@ require 'test/helper'
 
 class AppTests < Test::Unit::TestCase
   
+  DEFAULT_TEMPLATE = Sinatra::Resourceful::DataMapperTemplate
+  
+  setup do
+    Sinatra::Resourceful.default_template = DEFAULT_TEMPLATE
+  end
+  
   context 'the resource method' do
     test 'raises ArgumentError unless action is String, Symbol or Array' do
       assert_raises ArgumentError, NoMethodError do
@@ -157,33 +163,26 @@ class AppTests < Test::Unit::TestCase
   end
   
   context 'template' do
-    test 'recognizes default_template' do
-      
+    test 'works with default_template' do
       mock_app do
-        Sinatra::Resourceful.default_template = TestTemplate
+        Sinatra::Resourceful.default_template = Sinatra::Resourceful::TestTemplate
         resource Widget, :index
-        get('/?') { 'Template!' }
       end
-      
       get '/'
       assert last_response.body =~ /Template!/
-      
+    end
+    
+    test 'works within resource DSL' do
+      mock_app do
+        resource Widget, :index do
+          template Sinatra::Resourceful::TestTemplate
+        end
+      end
+      get '/'
+      assert last_response.body =~ /Template!/
     end
   end
   
-=begin
-  test 'after block works' do
-    mock_app do
-      resource Widget, :index do
-        after do
-          @widgets = ['notfancy']
-        end
-      end
-    end
-    get '/widgets'
-   assert last_response.body =~ /notfancy/
-  end
-=end
   test 'sanity' do
     mock_app do
       get('/') { 'Hello' }
