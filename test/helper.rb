@@ -8,6 +8,7 @@ require 'rack/test'
 require 'contest'
 require 'sinatra/base'
 require 'sinatra/resourceful'
+require 'lib/sinatra/datamapper'
 
 class Test::Unit::TestCase
   include Rack::Test::Methods

@@ -13,10 +13,6 @@ module Sinatra
     
     class Resource
       
-      ######## Delete these next two lines when DSL implements ability to do this.
-      require 'lib/sinatra/datamapper'
-      include Sinatra::Resourceful::DataMapperTemplate
-      
       class Config < OpenStruct; end
       attr_reader :config, :app
       
