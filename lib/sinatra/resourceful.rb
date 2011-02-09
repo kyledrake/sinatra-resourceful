@@ -7,18 +7,15 @@ module Sinatra
       Resource.new self, model, actions, block
     end
     
-    module Template
-      
-      def route(name, &block)
-        define_method name.to_sym, block
-      end
-    end
+    @@default_template = nil
+    def self.default_template; @@default_template end
+    def self.default_template=(mod); @@default_template = mod end
     
     class Resource
       
       ######## Delete these next two lines when DSL implements ability to do this.
       require 'lib/sinatra/datamapper'
-      include DataMapperTemplate
+      include Sinatra::Resourceful::DataMapperTemplate
       
       class Config < OpenStruct; end
       attr_reader :config, :app
@@ -52,14 +49,14 @@ module Sinatra
                              :update_redirect => @update_redirect, 
                              :conditions => @conditions,
                              :before => @before,
-                             :before_actions => @before_actions
-        
+                             :before_actions => @before_actions,
+                             :actions => actions
+        extend eval(Sinatra::Resourceful.default_template) || Sinatra::Resourceful::DataMapperTemplate
         actions.each {|action| send(action.to_sym)}
       end
       
       def before(*actions, &block)
-        actions << :all if actions.empty?
-        @before_actions = actions
+        @before_actions = actions.empty? ? [:all] : actions
         @before = block
       end
       

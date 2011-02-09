@@ -156,6 +156,21 @@ class AppTests < Test::Unit::TestCase
     end
   end
   
+  context 'template' do
+    test 'recognizes default_template' do
+      
+      mock_app do
+        Sinatra::Resourceful.default_template = TestTemplate
+        resource Widget, :index
+        get('/?') { 'Template!' }
+      end
+      
+      get '/'
+      assert last_response.body =~ /Template!/
+      
+    end
+  end
+  
 =begin
   test 'after block works' do
     mock_app do

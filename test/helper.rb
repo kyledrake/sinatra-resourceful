@@ -70,3 +70,12 @@ class Brit < Widget
     return ['fancybrit'] if args && args[:is_not_an_idiot] == true
   end
 end
+
+module TestTemplate
+  def index
+    _c = config
+    'Template!'
+  end
+end
+
+
