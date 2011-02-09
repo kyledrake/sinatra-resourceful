@@ -13,10 +13,15 @@ module Sinatra
     
     class Resource
       
-      class Config < OpenStruct; end
-      attr_reader :config, :app
-      
       ACTIONS = [:index, :new, :create, :show, :edit, :update, :delete]
+      
+      class Config < OpenStruct; end
+      attr_reader :app
+      
+      # Containerize these with an OpenStruct, so we can bind them to a local variable for the block execution.
+      # The alternative is something crazy that writes local variables from instance variables.. not interested.
+      def config; @config = Config.new Hash[instance_variables.map {|k| [k[1..k.length].to_sym, eval(k)] }] end
+      
       def initialize(app, model, actions, block)
         
         raise ArgumentError, 'action(s) must be Array, String, or Symbol' unless [Array, String, Symbol].include? actions.class
@@ -34,27 +39,11 @@ module Sinatra
         @update_redirect ||= @redirect
         @before_actions ||= []
         @before_actions = ACTIONS if @before_actions.include?(:all)
+        @actions = actions
         @template ||= Sinatra::Resourceful.default_template
-        
-        # Containerize these with an OpenStruct, so we can bind them to a local variable for the block execution.
-        # The alternative is something crazy that writes local variables from instance variables.. not interested.
-        @config = Config.new :model => @model,
-                             :singular => @singular,
-                             :plural => @plural,
-                             :redirect => @redirect,
-                             :create_redirect => @create_redirect,
-                             :update_redirect => @update_redirect,
-                             :template => @template,
-                             :conditions => @conditions,
-                             :before => @before,
-                             :before_actions => @before_actions,
-                             :actions => actions
-        
-        # This next line is probably a bad thing. I'm assuming one-time template doesn't work here, since it's extending to the class.
-        # This will likely be an issue requiring resolution.
         extend @template
-        
-        actions.each {|action| send(action.to_sym)}
+    
+        @actions.each {|action| send(action.to_sym)}
       end
       
       def before(*actions, &block)
