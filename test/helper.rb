@@ -21,54 +21,30 @@ class Test::Unit::TestCase
     @app.set :raise_errors, true
   end
 
-  def app
-    @app
-  end
-
-  def app=(new_app)
-    @app = new_app
-  end
-  
+  def app; @app end
+  def app=(new_app); @app = new_app end
 end
 
-
 class Widget
-  
   DESCRIPTION = 'Some thing.'
-  
   attr_accessor :description
+  def initialize; @description = DESCRIPTION end
   
-  def initialize
-    @description = DESCRIPTION
-  end
+  def self.create(properties); true end
+  def self.get(id); id == 'id' ? Widget.new : raise('Fail to lookup') end
+  def update(args); description = args[:description] if args[:description] end
+  def destroy; true end
   
   def self.all(args = {})
     args = {} if args.nil?
     return ['fancy'] if args && args[:is_not_an_idiot] == true
     []
   end
-  
-  def self.create(properties)
-    true
-  end
-  
-  def self.get(id)
-    return (id == 'id' ? Widget.new : raise('Fail to lookup'))
-  end
-  
-  def update(args)
-    description = args[:description] if args[:description]
-  end
-
-  def destroy
-    true
-  end
-  
 end
 
 class Brit < Widget
   def self.all(args = {})
-    return ['fancybrit'] if args && args[:is_not_an_idiot] == true
+    ['fancybrit'] if args && args[:is_not_an_idiot] == true
   end
 end
 
