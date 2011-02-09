@@ -46,11 +46,7 @@ module Sinatra
         @actions.each {|action| send(action.to_sym)}
       end
       
-      def before(*actions, &block)
-        @before_actions = actions.empty? ? [:all] : actions
-        @before = block
-      end
-      
+      def before(*actions, &block); @before_actions = (actions.empty? ? [:all] : actions) and @before = block end
       def template(mod); @template = mod end
       def conditions(opts={}); @conditions = opts end
       def create_redirect(url); @create_redirect = url end
